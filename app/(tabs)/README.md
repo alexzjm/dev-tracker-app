@@ -1,0 +1,1 @@
+contains private routes of the application (after login)

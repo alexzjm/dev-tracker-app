@@ -1,0 +1,1 @@
+contains public routes of the application
