@@ -1,4 +1,3 @@
-import * as WebBrowser from 'expo-web-browser';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function LoginScreen() {
@@ -28,16 +27,18 @@ export default function LoginScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>
-        Dev Tracker
-      </Text>
-      <Text style={styles.subtitle}>
-        Track your development progress
-      </Text>
-      
-      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Login with GitHub</Text>
-      </TouchableOpacity>
+      <View style={styles.content}>
+        <View style={styles.header}>
+          <Text style={styles.title}>Dev Tracker</Text>
+          <Text style={styles.subtitle}>
+            Track your development progress
+          </Text>
+        </View>
+        
+        <TouchableOpacity style={styles.loginButton} onPress={handleLogin} activeOpacity={0.7}>
+          <Text style={styles.buttonText}>Continue with GitHub</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -45,32 +46,43 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#000000',
+  },
+  content: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
-    backgroundColor: '#000',
+    paddingHorizontal: 40,
+  },
+  header: {
+    alignItems: 'center',
+    marginBottom: 80,
   },
   title: {
     fontSize: 32,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 10,
+    fontWeight: '600',
+    color: '#ffffff',
+    marginBottom: 16,
+    letterSpacing: 1,
   },
   subtitle: {
     fontSize: 16,
-    color: '#ccc',
-    marginBottom: 40,
+    color: '#666666',
     textAlign: 'center',
+    fontWeight: '400',
   },
   loginButton: {
-    padding: 15,
-    borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#666',
-    backgroundColor: '#333',
+    borderColor: '#333333',
+    paddingHorizontal: 32,
+    paddingVertical: 14,
+    borderRadius: 6,
+    backgroundColor: 'transparent',
   },
   buttonText: {
-    color: '#fff',
-    fontSize: 16,
+    color: '#ffffff',
+    fontSize: 15,
+    fontWeight: '500',
+    letterSpacing: 0.5,
   },
 }); 
