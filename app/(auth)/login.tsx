@@ -1,6 +1,31 @@
-import { StyleSheet, Text, View } from 'react-native';
+import * as WebBrowser from 'expo-web-browser';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function LoginScreen() {
+  const handleLogin = async () => {
+    console.log('Login button pressed!');
+    
+    // GitHub OAuth URL
+    // const githubClientId = 'Ov23lizR0v5pcl4Do2I1';
+    // const redirectUri = 'http://localhost:3000/api/auth/github'; 
+    
+    // const authUrl = `https://github.com/login/oauth/authorize?client_id=${githubClientId}&redirect_uri=${redirectUri}&scope=user:email`;
+    
+    // try {
+    //   const result = await WebBrowser.openAuthSessionAsync(authUrl, redirectUri);
+    //   console.log('OAuth result:', result);
+      
+    //   if (result.type === 'success') {
+    //     // Extract the authorization code from the URL
+    //     const url = result.url;
+    //     console.log('Redirect URL:', url);
+    //     // You'll parse the code from the URL and send it to your backend
+    //   }
+    // } catch (error) {
+    //   console.error('OAuth error:', error);
+    // }
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>
@@ -10,9 +35,9 @@ export default function LoginScreen() {
         Track your development progress
       </Text>
       
-      <View style={styles.loginButton}>
-        <Text style={styles.buttonText}>Login with GitHub (Coming Soon)</Text>
-      </View>
+      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+        <Text style={styles.buttonText}>Login with GitHub</Text>
+      </TouchableOpacity>
     </View>
   );
 }
