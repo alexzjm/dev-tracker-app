@@ -40,7 +40,7 @@ export default function LoginScreen() {
 
     // GitHub OAuth URL
     const githubClientId = "Ov23lizR0v5pcl4Do2I1";
-    const redirectUri = "devtrackerapp://auth";
+         const redirectUri = "devtrackerapp://login";
 
     const authUrl = `https://github.com/login/oauth/authorize?client_id=${githubClientId}&redirect_uri=${redirectUri}&scope=user:email`;
 
