@@ -5,7 +5,7 @@ import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from "rea
 export default function SuccessScreen() {
   const { code } = useLocalSearchParams();
   const router = useRouter();
-  const [state, setState] = useState('loading'); // 'loading' | 'success' | 'error'
+  const [state, setState] = useState('loading'); // 'loading' | 'success' | 'auth-error' | 'backend-error'
   const [userData, setUserData] = useState<any>(null);
 
   useEffect(() => {
@@ -35,6 +35,7 @@ export default function SuccessScreen() {
       if (response.ok) {
         const data = await response.json();
         console.log("Backend response:", data);
+        setState('success')
         
         const backendUrl2 = 'https://dev-tracker-backend.vercel.app/api/auth/user';
         const response2 = await fetch(backendUrl2, {
@@ -57,12 +58,12 @@ export default function SuccessScreen() {
             }, 3000);
             
           } else {
-            console.log("Backend error:", response.status);
-            setState('error');
+            console.log("Backend error:", response.status, " - ", response2.error);
+            setState('backend-error');
           }
       } else {
         console.log("Backend error:", response.status);
-        setState('error');
+        setState('auth-error');
       }
     } catch (error) {
       console.error("Network error:", error);
@@ -87,7 +88,7 @@ export default function SuccessScreen() {
     );
   }
 
-  if (state === 'error') {
+  if (state === 'auth-error') {
     return (
       <View style={styles.container}>
         <Text style={styles.errorTitle}>Login Failed</Text>
@@ -96,6 +97,18 @@ export default function SuccessScreen() {
           <Text style={styles.buttonText}>Try Again</Text>
         </TouchableOpacity>
       </View>
+    );
+  }
+
+  if (state === 'backend-error') {
+    return (
+        <View style={styles.container}>
+            <Text style={styles.errorTitle}>Server Error</Text>
+            <Text style={styles.errorText}>Failed to fetch user data. Please try again.</Text>
+            <TouchableOpacity style={styles.button} onPress={handleRetry}>
+                <Text style={styles.buttonText}>Try Again</Text>
+            </TouchableOpacity>
+        </View>
     );
   }
 
