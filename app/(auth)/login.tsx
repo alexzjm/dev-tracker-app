@@ -1,6 +1,7 @@
 import { useRouter } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import * as SecureStore from 'expo-secure-store';
 
 export default function LoginScreen() {
   const router = useRouter();

@@ -20,7 +20,7 @@ export default function SuccessScreen() {
       setState('loading');
       console.log("Sending code to backend...");
       
-      const backendUrl = 'https://dev-tracker-backend.vercel.app/api/auth/github';
+      const backendUrl = 'https://dev-tracker-backend.vercel.app/api/auth/exchange-code';
       
       const response = await fetch(backendUrl, {
         method: 'POST',
@@ -36,14 +36,30 @@ export default function SuccessScreen() {
         const data = await response.json();
         console.log("Backend response:", data);
         
-        setUserData(data.user);
-        setState('success');
-        
-        // Auto-navigate to main app after 3 seconds
-        setTimeout(() => {
-          router.replace('/(tabs)');
-        }, 3000);
-        
+        const backendUrl2 = 'https://dev-tracker-backend.vercel.app/api/auth/user';
+        const response2 = await fetch(backendUrl2, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${data.access_token}`
+          }
+        });
+
+        if (response2.ok) {
+            const data = await response2.json();
+            console.log("Backend response:", data);
+            
+            setUserData(data.user);
+            setState('success');
+            
+            // Auto-navigate to main app after 3 seconds
+            setTimeout(() => {
+              router.replace('/(tabs)');
+            }, 3000);
+            
+          } else {
+            console.log("Backend error:", response.status);
+            setState('error');
+          }
       } else {
         console.log("Backend error:", response.status);
         setState('error');
