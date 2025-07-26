@@ -5,7 +5,7 @@ import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from "rea
 export default function SuccessScreen() {
   const { code } = useLocalSearchParams();
   const router = useRouter();
-  const [state, setState] = useState('loading'); // 'loading' | 'success' | 'auth-error' | 'backend-error'
+  const [authStatus, setAuthStatus] = useState('loading'); // 'loading' | 'success' | 'auth-error' | 'backend-error'
   const [userData, setUserData] = useState<any>(null);
 
   useEffect(() => {
@@ -17,12 +17,12 @@ export default function SuccessScreen() {
 
   const exchangeCodeForToken = async (authCode: string) => {
     try {
-      setState('loading');
+      setAuthStatus('loading');
       console.log("Sending code to backend...");
       
-      const backendUrl = 'https://dev-tracker-backend.vercel.app/api/auth/exchange-code';
+      const codeExchangeUrl = 'https://dev-tracker-backend.vercel.app/api/auth/exchange-code';
       
-      const response = await fetch(backendUrl, {
+      const response = await fetch(codeExchangeUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -33,24 +33,24 @@ export default function SuccessScreen() {
       });
 
       if (response.ok) {
-        const data = await response.json();
-        console.log("Backend response:", data);
-        setState('success')
+        const tokenData = await response.json();
+        console.log("Backend response:", tokenData);
+        setAuthStatus('success')
         
-        const backendUrl2 = 'https://dev-tracker-backend.vercel.app/api/auth/user';
-        const response2 = await fetch(backendUrl2, {
+        const getUserDataUrl = 'https://dev-tracker-backend.vercel.app/api/github/user';
+        const userResponse = await fetch(getUserDataUrl, {
           method: 'GET',
           headers: {
-            'Authorization': `Bearer ${data.access_token}`
+            'Authorization': `Bearer ${tokenData.access_token}`
           }
         });
 
-        if (response2.ok) {
-            const data = await response2.json();
-            console.log("Backend response:", data);
+        if (userResponse.ok) {
+            const rawUserData = await userResponse.json();
+            console.log("Backend response:", rawUserData);
             
-            setUserData(data.user);
-            setState('success');
+            setUserData(rawUserData.user);
+            setAuthStatus('success');
             
             // Auto-navigate to main app after 3 seconds
             setTimeout(() => {
@@ -58,16 +58,16 @@ export default function SuccessScreen() {
             }, 3000);
             
           } else {
-            console.log("Backend error:", response.status, " - ", response2.error);
-            setState('backend-error');
+            console.log("Backend error:", userResponse.status);
+            setAuthStatus('backend-error');
           }
       } else {
         console.log("Backend error:", response.status);
-        setState('auth-error');
+        setAuthStatus('auth-error');
       }
     } catch (error) {
       console.error("Network error:", error);
-      setState('error');
+      setAuthStatus('error');
     }
   };
 
@@ -79,7 +79,7 @@ export default function SuccessScreen() {
     router.replace('/(auth)/login');
   };
 
-  if (state === 'loading') {
+  if (authStatus === 'loading') {
     return (
       <View style={styles.container}>
         <ActivityIndicator size="large" color="#ffffff" />
@@ -88,7 +88,7 @@ export default function SuccessScreen() {
     );
   }
 
-  if (state === 'auth-error') {
+  if (authStatus === 'auth-error') {
     return (
       <View style={styles.container}>
         <Text style={styles.errorTitle}>Login Failed</Text>
@@ -100,7 +100,7 @@ export default function SuccessScreen() {
     );
   }
 
-  if (state === 'backend-error') {
+  if (authStatus === 'backend-error') {
     return (
         <View style={styles.container}>
             <Text style={styles.errorTitle}>Server Error</Text>
