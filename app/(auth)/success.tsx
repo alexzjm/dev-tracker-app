@@ -6,7 +6,7 @@ export default function SuccessScreen() {
   const { code } = useLocalSearchParams();
   const router = useRouter();
   const [state, setState] = useState('loading'); // 'loading' | 'success' | 'error'
-  const [userData, setUserData] = useState(null);
+  const [userData, setUserData] = useState<any>(null);
 
   useEffect(() => {
     if (code) {
@@ -41,7 +41,7 @@ export default function SuccessScreen() {
         
         // Auto-navigate to main app after 3 seconds
         setTimeout(() => {
-          router.replace('/(tabs)/');
+          router.replace('/(tabs)');
         }, 3000);
         
       } else {
@@ -55,7 +55,7 @@ export default function SuccessScreen() {
   };
 
   const handleContinue = () => {
-    router.replace('/(tabs)/');
+    router.replace('/(tabs)');
   };
 
   const handleRetry = () => {

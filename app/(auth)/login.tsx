@@ -4,8 +4,6 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export default function LoginScreen() {
   const router = useRouter();
-  
-  // Clean login screen - success screen handles OAuth callback
 
   const handleLogin = async () => {
     console.log("Starting OAuth login...");
@@ -20,7 +18,7 @@ export default function LoginScreen() {
     console.log("Redirect URI:", redirectUri);
 
     try {
-      // Use Expo's AuthSession for better redirect handling
+      // Use Expo's AuthSession for redirect handling
       WebBrowser.maybeCompleteAuthSession();
 
       const result = await WebBrowser.openAuthSessionAsync(
@@ -80,15 +78,6 @@ export default function LoginScreen() {
           activeOpacity={0.7}
         >
           <Text style={styles.buttonText}>Continue with GitHub</Text>
-        </TouchableOpacity>
-        
-        {/* Debug button to test success screen route */}
-        <TouchableOpacity
-          style={[styles.loginButton, { marginTop: 20, borderColor: '#444' }]}
-          onPress={() => router.push('/(auth)/success?code=test123')}
-          activeOpacity={0.7}
-        >
-          <Text style={[styles.buttonText, { color: '#888' }]}>Test Success Screen</Text>
         </TouchableOpacity>
       </View>
     </View>
