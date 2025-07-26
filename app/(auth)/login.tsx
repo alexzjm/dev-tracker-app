@@ -1,46 +1,18 @@
-import * as Linking from "expo-linking";
+import { useRouter } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
-import { useEffect } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export default function LoginScreen() {
-  // Listen for deep links when component mounts
-  useEffect(() => {
-    const handleDeepLink = (url: string) => {
-      console.log("Deep link received:", url);
-
-      if (url.includes("devtrackerapp://auth")) {
-        const urlObj = new URL(url);
-        const code = urlObj.searchParams.get("code");
-
-        if (code) {
-          console.log("Authorization code from deep link:", code);
-          // TODO: Handle the code (exchange for token, etc.)
-        }
-      }
-    };
-
-    // Listen for deep links
-    const subscription = Linking.addEventListener("url", ({ url }) => {
-      handleDeepLink(url);
-    });
-
-    // Check if app was opened with a deep link
-    Linking.getInitialURL().then((url) => {
-      if (url) {
-        handleDeepLink(url);
-      }
-    });
-
-    return () => subscription?.remove();
-  }, []);
+  const router = useRouter();
+  
+  // Clean login screen - success screen handles OAuth callback
 
   const handleLogin = async () => {
     console.log("Starting OAuth login...");
 
     // GitHub OAuth URL
     const githubClientId = "Ov23lizR0v5pcl4Do2I1";
-         const redirectUri = "devtrackerapp://login";
+         const redirectUri = "devtrackerapp://success";
 
     const authUrl = `https://github.com/login/oauth/authorize?client_id=${githubClientId}&redirect_uri=${redirectUri}&scope=user:email`;
 
@@ -57,26 +29,37 @@ export default function LoginScreen() {
       );
       console.log("OAuth result:", result);
 
+      console.log("Full OAuth result:", JSON.stringify(result, null, 2));
+      
       if (result.type === "success") {
         console.log("OAuth SUCCESS!");
         const url = result.url;
-        console.log("Redirect URL:", url);
+        console.log("Full redirect URL:", url);
 
         // Parse the code from the URL
-        const urlParams = new URL(url);
-        const code = urlParams.searchParams.get("code");
+        try {
+          const urlParams = new URL(url);
+          const code = urlParams.searchParams.get("code");
+          console.log("Extracted code:", code);
 
-        if (code) {
-          console.log("Authorization code received:", code);
-          // TODO: Send code to backend or exchange directly
-          // For now, just log it
-        } else {
-          console.log("No code found in URL");
+          if (code) {
+            console.log("Authorization code received! Navigating to success screen...");
+            // Manually navigate to success screen with the code
+            router.push(`/(auth)/success?code=${code}`);
+          } else {
+            console.log("No code found in URL parameters");
+            console.log("Available URL params:", [...urlParams.searchParams.entries()]);
+          }
+        } catch (error) {
+          console.log("Error parsing URL:", error);
+          console.log("Raw URL:", url);
         }
       } else if (result.type === "cancel") {
         console.log("User cancelled OAuth");
+      } else if (result.type === "dismiss") {
+        console.log("Browser was dismissed");
       } else {
-        console.log("Unknown OAuth result:", result.type);
+        console.log("Unknown OAuth result type:", result.type);
       }
     } catch (error) {
       console.error("OAuth error:", error);
@@ -97,6 +80,15 @@ export default function LoginScreen() {
           activeOpacity={0.7}
         >
           <Text style={styles.buttonText}>Continue with GitHub</Text>
+        </TouchableOpacity>
+        
+        {/* Debug button to test success screen route */}
+        <TouchableOpacity
+          style={[styles.loginButton, { marginTop: 20, borderColor: '#444' }]}
+          onPress={() => router.push('/(auth)/success?code=test123')}
+          activeOpacity={0.7}
+        >
+          <Text style={[styles.buttonText, { color: '#888' }]}>Test Success Screen</Text>
         </TouchableOpacity>
       </View>
     </View>
